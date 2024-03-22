@@ -1,0 +1,4 @@
+  name: TNTRun
+  main: fr.derycube.omega7711.TNTRun.plugin.Plugin
+  version: 1.0.0
+  depend: [NametagEdit]
