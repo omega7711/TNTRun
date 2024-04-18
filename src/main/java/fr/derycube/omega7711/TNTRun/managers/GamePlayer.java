@@ -51,7 +51,7 @@ public class GamePlayer {
             this.points = 0;
         }
         this.alive = true;
-        this.doublejump = 3;
+        this.doublejump = GameManager.doublejumpsatstartofgame;
     }
     public void giveitem() {
         if(this.doublejump > 0 && this.isAlive()) {

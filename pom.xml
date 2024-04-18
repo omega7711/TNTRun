@@ -6,7 +6,7 @@
 
     <groupId>fr.derycube.omega7711</groupId>
     <artifactId>TNTRun</artifactId>
-    <version>1.0.0</version>
+    <version>Beta-18.04.24-Build4</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -80,7 +80,7 @@
         <dependency>
             <groupId>fr.derycube</groupId>
             <artifactId>bukkitapi</artifactId>
-            <version>1.1.9</version>
+            <version>1.2.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>

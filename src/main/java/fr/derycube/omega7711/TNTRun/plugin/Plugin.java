@@ -10,6 +10,8 @@ import fr.derycube.omega7711.TNTRun.Handlers.HandlersHander;
 import fr.derycube.omega7711.TNTRun.Handlers.PlayerMoveEvent;
 import fr.derycube.omega7711.TNTRun.Tasks.TaskUpdater;
 import fr.derycube.omega7711.TNTRun.commands.startCommand;
+import fr.derycube.omega7711.TNTRun.commands.versionCommand;
+import fr.derycube.omega7711.TNTRun.hosts.HostManager;
 import fr.derycube.omega7711.TNTRun.managers.GameManager;
 import fr.derycube.omega7711.TNTRun.managers.GamePlayer;
 import fr.derycube.omega7711.TNTRun.utils.GameMoment;
@@ -36,11 +38,13 @@ public class Plugin extends JavaPlugin {
         new Frame(this, new ScoreboardAdapter());
         Plugin.instance = this;
         HandlersHander.setupHandler(this);
-        Bukkit.getLogger().info("%s made by omega_7711".replace("%s", Plugin.MinigameName));
+        HostManager.registerHost();
+        Bukkit.getLogger().info("%s made by omega_7711 for DeryCube (and only)".replace("%s", Plugin.MinigameName));
         Bukkit.getScheduler().runTaskTimer(this, Plugin::custom_tick, 20L, 1L);
         GameManager.setup();
         new TaskUpdater(this);
         BukkitAPI.getCommandHandler().registerCommands(startCommand.class);
+        BukkitAPI.getCommandHandler().registerCommands(versionCommand.class);
     }
     public static void custom_tick() {
         Bukkit.getWorld("world").setStorm(false);
@@ -82,22 +86,23 @@ public class Plugin extends JavaPlugin {
                 }
                 //Met les joueurs dans leur GameMode respectif
                 player.setGameMode(GameManager.players.get(player.getUniqueId()).getTeam().getGamemode());
-                if(GameManager.players.get(player.getUniqueId()).getTeam()==PlayerTeam.SURVIVOR){
-                    player.getInventory().setHelmet(new ItemStack(Material.AIR));
-                    NametagEdit.getApi().setPrefix(player, ChatUtil.translate("&f"));
-                    NametagEdit.getApi().applyTags();
-                    player.removePotionEffect(PotionEffectType.SPEED);
-                    player.setAllowFlight(false);
-                } else if(GameManager.players.get(player.getUniqueId()).getTeam()==PlayerTeam.MODERATION_MOD) {
-                    player.setAllowFlight(true);
-                    player.getInventory().setHelmet(new ItemStack(Material.AIR));
-                    NametagEdit.getApi().applyTags();
-                } else if(GameManager.players.get(player.getUniqueId()).getTeam()==PlayerTeam.SPECTATOR) {
-                    player.setAllowFlight(true);
-                    player.getInventory().setHelmet(new ItemStack(Material.AIR));
-                    player.getInventory().setItem(4, new ItemStack(Material.AIR));
-                    NametagEdit.getApi().setPrefix(player, ChatUtil.translate("&8&m"));
-                    NametagEdit.getApi().applyTags();
+                if(GameManager.gamemoment == GameMoment.ROUND) {
+                    if(GameManager.players.get(player.getUniqueId()).getTeam()==PlayerTeam.SURVIVOR){
+                        player.getInventory().setHelmet(new ItemStack(Material.AIR));
+                        NametagEdit.getApi().setPrefix(player, ChatUtil.translate("&f"));
+                        NametagEdit.getApi().applyTags();
+                        player.removePotionEffect(PotionEffectType.SPEED);
+                        player.setAllowFlight(false);
+                    } else if(GameManager.players.get(player.getUniqueId()).getTeam()==PlayerTeam.MODERATION_MOD) {
+                        player.setAllowFlight(true);
+                        NametagEdit.getApi().applyTags();
+                    } else if(GameManager.players.get(player.getUniqueId()).getTeam()==PlayerTeam.SPECTATOR) {
+                        player.setAllowFlight(true);
+                        player.getInventory().setHelmet(new ItemStack(Material.AIR));
+                        player.getInventory().setItem(4, new ItemStack(Material.AIR));
+                        NametagEdit.getApi().setPrefix(player, ChatUtil.translate("&8&m"));
+                        NametagEdit.getApi().applyTags();
+                    }
                 }
             }
         }

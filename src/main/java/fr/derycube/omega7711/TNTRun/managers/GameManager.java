@@ -12,6 +12,8 @@ import fr.derycube.omega7711.TNTRun.utils.Utils;
 import fr.derycube.utils.ChatUtil;
 import fr.derycube.utils.Title;
 import fr.derycube.utils.item.CustomItem;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,6 +30,8 @@ public class GameManager {
     public static GameMoment gamemoment;
     public static Location mapcenter = new Location(Bukkit.getWorld("world"), -103.5, 48, -802.5, 0,0);
     public static int minplayers = 2;
+    @Getter
+    @Setter
     public static int maxplayers = 30;
     public static int secondsbeforestart;
     public static boolean cooldownbeforestart;
@@ -36,6 +40,8 @@ public class GameManager {
     public static HashMap<UUID, GamePlayer> players;
     public static MiniJeuxServer.ServerStatus status;
     public static Long tickstodestroyblock;
+    @Getter@Setter
+    public static int doublejumpsatstartofgame;
     public static void setup() {
         GameManager.players = new HashMap<>();
         GameManager.gamemoment = GameMoment.WAITING_FOR_PLAYERS;

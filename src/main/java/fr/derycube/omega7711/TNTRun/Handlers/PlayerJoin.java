@@ -5,6 +5,7 @@ import de.dytanic.cloudnet.ext.bridge.player.IPlayerManager;
 import fr.derycube.BukkitAPI;
 import fr.derycube.api.data.player.ProfileData;
 import fr.derycube.menu.pagination.ConfirmationMenu;
+import fr.derycube.omega7711.TNTRun.hosts.HostManager;
 import fr.derycube.omega7711.TNTRun.managers.GameManager;
 import fr.derycube.omega7711.TNTRun.managers.GamePlayer;
 import fr.derycube.omega7711.TNTRun.utils.GameMoment;
@@ -20,6 +21,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.Objects;
 
 public class PlayerJoin implements Listener {
     @EventHandler
@@ -46,14 +49,20 @@ public class PlayerJoin implements Listener {
                     }, new ItemBuilder(Material.BED).setName("&c&l"+Utils.gettext(e.getPlayer(), Texts.ReturnToLobby)).toItemStack(), null).openMenu(onClick.getPlayer());
                 });
                 e.getPlayer().getInventory().setItem(8, FALLBACK.toItemStack());
+                if(Objects.equals(e.getPlayer().getName(), HostManager.getHoster())) {
+                    e.getPlayer().sendMessage(Utils.prefix(Utils.gettext(e.getPlayer(), Texts.PlayerIsHost)));
+                    HostManager.giveHostItems(e.getPlayer());
+                }
             }
         }
         e.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.SATURATION, 9999999, 255, false, false), true);
         e.getPlayer().teleport(GameManager.mapcenter.clone());
         GameManager.players.put(e.getPlayer().getUniqueId(), player);
-        if(Utils.getAlivePlayersExceptMods(true)>=GameManager.minplayers&&!GameManager.cooldownbeforestart) {
-            GameManager.cooldownbeforestart = true;
-            GameManager.secondsbeforestart = GameMoment.STARTING.getTimeinSeconds();
+        if(!HostManager.isHost()) {
+            if(Utils.getAlivePlayersExceptMods(true)>=GameManager.minplayers&&!GameManager.cooldownbeforestart) {
+                GameManager.cooldownbeforestart = true;
+                GameManager.secondsbeforestart = GameMoment.STARTING.getTimeinSeconds();
+            }
         }
     }
 }

@@ -1,18 +1,22 @@
 package fr.derycube.omega7711.TNTRun.Handlers;
 
+import fr.derycube.omega7711.TNTRun.hosts.HostManager;
 import fr.derycube.omega7711.TNTRun.managers.GameManager;
 import fr.derycube.omega7711.TNTRun.managers.GamePlayer;
+import fr.derycube.omega7711.TNTRun.plugin.Plugin;
 import fr.derycube.omega7711.TNTRun.utils.GameMoment;
 import fr.derycube.omega7711.TNTRun.utils.PlayerTeam;
 import fr.derycube.omega7711.TNTRun.utils.Texts;
 import fr.derycube.omega7711.TNTRun.utils.Utils;
 import fr.derycube.utils.ChatUtil;
+import fr.derycube.utils.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +44,28 @@ public class PlayerLeave implements Listener {
             if(entry.getValue().isAlive()) {
                 playersalive.put(entry.getKey(),entry.getValue());
             }
+        }
+        if(HostManager.getHoster().equalsIgnoreCase(e.getPlayer().getName())) {
+            HostManager.setDisconnect(5 * 60);
+            for(Player player:Bukkit.getOnlinePlayers()) {
+                player.sendMessage(Utils.prefix(Utils.gettext(player, Texts.HostDisconnected).replace("%p", e.getPlayer().getName()).replace("%s", TimeUtil.niceTime(HostManager.getDisconnect() * 1000L))));
+            }
+            //Bukkit.broadcastMessage(ChatUtil.prefix("&c" + e.getPlayer().getName() + " &fs'est déconnecté. Il a &c" + TimeUtil.niceTime(HostManager.getDisconnect() * 1000L) + " minutes &fpour se reconnecter ou l'host sera &cfermé&f."));
+
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    if (Bukkit.getPlayer(e.getPlayer().getUniqueId()) != null) {
+                        HostManager.setDisconnect(5*60);
+                        cancel();
+                        return;
+                    }
+                    HostManager.setDisconnect(HostManager.getDisconnect() - 1);
+                    if (HostManager.getDisconnect() <= 0) {
+                        Bukkit.getServer().shutdown();
+                    }
+                }
+            }.runTaskTimer(Plugin.getInstance(), 0, 20);
         }
     }
 }

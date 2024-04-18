@@ -7,17 +7,39 @@ import fr.derycube.utils.ChatUtil;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Utils {
     public static String gettext(Player player, Texts texttoget) {
         String language = BukkitAPI.getDerycubeAPI().getProfile(player.getUniqueId()).getLanguage();
-        if(language.equalsIgnoreCase("fr")) {
-            return texttoget.getFrench();
-        } else if(language.equalsIgnoreCase("en")) {
-            return texttoget.getEnglish();
+        if(Objects.equals(texttoget.getEnglish(), "") && Objects.equals(texttoget.getFrench(), "") && Objects.equals(texttoget.getTkt(), "")) {
+            if(language.equalsIgnoreCase("fr")) {
+                return texttoget.getFrench_list().get(Utils.getRandomNumberInRange(0, texttoget.getFrench_list().size()));
+            } else if (language.equalsIgnoreCase("en")) {
+                return texttoget.getEnglish_list().get(Utils.getRandomNumberInRange(0, texttoget.getEnglish_list().size()));
+            } else {
+                return texttoget.getTkt_list().get(Utils.getRandomNumberInRange(0, texttoget.getTkt_list().size()));
+            }
         } else {
-            return texttoget.getTkt();
+            if(language.equalsIgnoreCase("fr")) {
+                return texttoget.getFrench();
+            } else if(language.equalsIgnoreCase("en")) {
+                return texttoget.getEnglish();
+            } else {
+                return texttoget.getTkt();
+            }
+        }
+    }
+    public static List<String> getAllStrings(Player player, Texts texttoget) {
+        String language = BukkitAPI.getDerycubeAPI().getProfile(player.getUniqueId()).getLanguage();
+        if(language.equalsIgnoreCase("fr")) {
+            return texttoget.getFrench_list();
+        } else if(language.equalsIgnoreCase("en")) {
+            return texttoget.getEnglish_list();
+        } else {
+            return texttoget.getTkt_list();
         }
     }
     public static int getRandomNumberInRange(int min, int max) {
